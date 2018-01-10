@@ -11,14 +11,12 @@ import java.util.Map;
 /**
  *  BeanUtil class includes some  useful methods for beans objects.
  *
- *  @author <a href="mailto:serhat@gmail.com">Serhat Dirik</a>
- *
+  *
  */
 public class BeanUtil {
 
 	/**
 	 * Represents a single bean propery of a bean
-	 *  @author <a href="mailto:serhat@redhat.com">Serhat Dirik</a>
 	 *
 	 */
 	public static class BeanProperty {
