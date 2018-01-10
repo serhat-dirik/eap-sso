@@ -87,7 +87,32 @@
 	     });//eof ajax
  	};
 
- 	 refresh();
+ 	remove = function(){
+	     var key = $("#attrKey").val();
+	     $.ajax({
+	        type:"GET",
+	        //headers: {'Cookie' : document.cookie },
+	        cache: false,
+ 	      // NO setCookies option available, set cookie to document
+ 	      //setCookies: "lkfh89asdhjahska7al446dfg5kgfbfgdhfdbfgcvbcbc dfskljvdfhpl",
+ 	        crossDomain: true,
+ 	        xhrFields: {
+ 	         withCredentials: true
+ 	        },
+	        url: cp+"/rest/session/removeAttribute",
+	        jsonp: "callback",
+	        dataType:"jsonp",
+	        data: {
+	          key: key
+	        },
+
+	        success: function(response){
+	           refresh();
+	        }
+	     });//eof ajax
+	};
+	//initial on load 
+ 	refresh();
     });//eof dom ready!
 
 </script>
@@ -110,6 +135,7 @@
   <hr>
   <label>Key/Value:</label><input id="attrKey" type="text" size="20" title="Key" /> <input id="attrValue" type="text" size="20" title="Value" />
   <input id="btnSave" type="button" value="Save to <%=request.getServerName()%>:<%=request.getServerPort()%> Session"	onclick="save();" />
+  <input id="btnRemove" type="button" value="Remove"	onclick="remove();" />
   <hr>
   <br/>Output
   <br />

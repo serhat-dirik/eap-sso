@@ -189,4 +189,16 @@ public class SessionService {
 	}
 
 
+	@GET
+	@POST
+	@Path("/removeAttribute")
+	@Produces({ "application/javascript" })
+	public String removeSessionAttribute(@QueryParam(value="key") String key,@QueryParam("callback") String callback)  {
+		httpReq.getSession().removeAttribute(key);
+		//Convert object to JSON
+	    JsonObjectBuilder builder = Json.createObjectBuilder();
+	    builder.add("result", "ok");
+	    //return as callback javascript padding
+	    return (callback + "(" + builder.build().toString() + ")");
+	}
 }

@@ -153,12 +153,17 @@
             </cache-container>
             <cache-container name="web" default-cache="remote-http" module="org.wildfly.clustering.web.infinispan">
                 <transport lock-timeout="60000"/>
-                <replicated-cache name="remote-http" mode="SYNC">
+                <invalidation-cache name="remote-http" mode="SYNC">
+                    <locking isolation="REPEATABLE_READ"/>
+                    <transaction mode="BATCH"/>
+                    <remote-store cache="httpSessionCache" socket-timeout="60000" remote-servers="remote-jdg-server" passivation="false" preload="false" purge="false" shared="true"/>
+                </invalidation-cache>
+                <!--<replicated-cache name="remote-http" mode="SYNC">
                     <locking isolation="REPEATABLE_READ"/>
                     <transaction mode="BATCH"/>
                     <remote-store cache="httpSessionCache" socket-timeout="60000" remote-servers="remote-jdg-server" passivation="false" preload="true" purge="false" shared="true"/>
                 </replicated-cache>
-                <!--<distributed-cache name="remote-http" mode="SYNC" l1-lifespan="0" owners="1">
+                <distributed-cache name="remote-http" mode="SYNC" l1-lifespan="0" owners="1">
                     <locking isolation="REPEATABLE_READ"/>
                     <transaction mode="BATCH"/>
                     <remote-store cache="httpSessionCache" socket-timeout="60000" remote-servers="remote-jdg-server" passivation="false" preload="true" purge="false" shared="true"/>

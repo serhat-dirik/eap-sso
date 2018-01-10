@@ -104,15 +104,72 @@ public class JdgInfoService {
 		    for(Object key:keySet) {
 		    	if(key != null) {
 		    		Object value = cache.get(key);
-		    		jsonArray.add(Json.createObjectBuilder().add(key.toString() , value == null ? "null":BeanUtil.deepToString(value)));
+		    		if(key != null && value != null) {
+		    			jsonArray.add(Json.createObjectBuilder().add(key.toString() , value.getClass().isPrimitive() || value instanceof String ? value.toString(): BeanUtil.deepToString(value)));	
+		    		}
+		    		
 		    	}
 		    }
- 		    builder.add("result", jsonArray);
+ 		    
 		    rcm.stop();
 	    }catch(Exception ex) {
 	    	if(rcm != null) rcm.stop();
 	    	builder.add("result", ex.getMessage());
 	    } 
+	    builder.add("result", jsonArray);
+	    //return as callback javascript padding
+	    return (callback + "(" + builder.build().toString() + ")");
+	}
+	
+	
+	
+	@GET
+	@POST
+	@Path("/save")
+	@Produces({ "application/javascript" })
+	public String save(@QueryParam(value="key") String key,@QueryParam(value="value")String value,@QueryParam(value="cacheHost") String cacheHost,@QueryParam(value="cachePort")String cachePort,@QueryParam(value="cacheName")String cacheName,@QueryParam("callback") String callback)  {
+		//Convert object to JSON
+	    JsonObjectBuilder builder = Json.createObjectBuilder();
+	    JsonArrayBuilder jsonArray = Json.createArrayBuilder();
+	    RemoteCacheManager rcm = null;
+	    try {
+		    rcm = remoteCacheManager(cacheHost, cachePort, null, null);
+		    RemoteCache<Object, Object> cache = rcm.getCache(cacheName);
+		    jsonArray.add(Json.createObjectBuilder().add("before_put", cache.size() ));
+		    cache.put(key, value);
+		    jsonArray.add(Json.createObjectBuilder().add("after_put", cache.size() ));
+		    rcm.stop();
+	    }catch(Exception ex) {
+	    	if(rcm != null) rcm.stop();
+	    	builder.add("result", ex.getMessage());
+	    } 
+	    builder.add("result", jsonArray);
+	    //return as callback javascript padding
+	    return (callback + "(" + builder.build().toString() + ")");
+	}
+	
+	
+	@GET
+	@POST
+	@Path("/remove")
+	@Produces({ "application/javascript" })
+	public String remove(@QueryParam(value="key") String key,@QueryParam(value="cacheHost") String cacheHost,@QueryParam(value="cachePort")String cachePort,@QueryParam(value="cacheName")String cacheName,@QueryParam("callback") String callback)  {
+		//Convert object to JSON
+	    JsonObjectBuilder builder = Json.createObjectBuilder();
+	    JsonArrayBuilder jsonArray = Json.createArrayBuilder();
+	    RemoteCacheManager rcm = null;
+	    try {
+		    rcm = remoteCacheManager(cacheHost, cachePort, null, null);
+		    RemoteCache<Object, Object> cache = rcm.getCache(cacheName);
+		    jsonArray.add(Json.createObjectBuilder().add("before_remove", cache.size() ));
+		    cache.remove(key);
+		    jsonArray.add(Json.createObjectBuilder().add("after_remove", cache.size() ));
+		    rcm.stop();
+	    }catch(Exception ex) {
+	    	if(rcm != null) rcm.stop();
+	    	builder.add("result", ex.getMessage());
+	    } 
+	    builder.add("result", jsonArray);
 	    //return as callback javascript padding
 	    return (callback + "(" + builder.build().toString() + ")");
 	}
